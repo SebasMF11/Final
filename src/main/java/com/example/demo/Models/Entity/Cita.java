@@ -1,17 +1,17 @@
 package com.example.demo.Models.Entity;
 
-import jakarta.persistence.Table;
-import jakarta.persistence.TemporalType;
+import java.util.Date;
 
 import org.hibernate.annotations.CreationTimestamp;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
-import java.util.Date;
+import jakarta.persistence.TemporalType;
 
 @Entity
 @Table (name = "Citas")
@@ -20,7 +20,6 @@ public class Cita {
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private long id;
-
     private String estado;
     private long IdPaciente;
     private long IdDoctor;
@@ -30,12 +29,11 @@ public class Cita {
     @Temporal(TemporalType.TIMESTAMP)
     private Date CreateAt;
 
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
+    public Cita(long IdPaciente, long IdDoctor, String estado, Date CreateAt) {
+        this.CreateAt = CreateAt;
+        this.IdDoctor = IdDoctor;
+        this.IdPaciente = IdPaciente;
+        this.estado = estado;
     }
 
     public String getEstado() {
@@ -68,5 +66,13 @@ public class Cita {
 
     public void setCreateAt(Date createAt) {
         CreateAt = createAt;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 }
