@@ -14,61 +14,29 @@ import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 
 @Entity
-@Table (name = "Citas")
-public class Cita {
-
+@Table (name = "Historias")
+public class Historia {
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private long id;
-    private String estado;
+
     private long IdPaciente;
     private long IdDoctor;
+    private String descripcion;
 
     @CreationTimestamp
     @Column(name = "creation_date", nullable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date CreateAt;
 
-    public Cita(long IdPaciente, long IdDoctor, String estado, Date CreateAt) {
+    public Historia(long IdPaciente, long IdDoctor, Date CreateAt, String descripcion) {
         this.CreateAt = CreateAt;
         this.IdDoctor = IdDoctor;
         this.IdPaciente = IdPaciente;
-        this.estado = estado;
+        this.descripcion = descripcion;
     }
 
-    public Cita() {
-    }
-
-    public String getEstado() {
-        return estado;
-    }
-
-    public void setEstado(String estado) {
-        this.estado = estado;
-    }
-
-    public long getIdPaciente() {
-        return IdPaciente;
-    }
-
-    public void setIdPaciente(long idPaciente) {
-        IdPaciente = idPaciente;
-    }
-
-    public long getIdDoctor() {
-        return IdDoctor;
-    }
-
-    public void setIdDoctor(long idDoctor) {
-        IdDoctor = idDoctor;
-    }
-
-    public Date getCreateAt() {
-        return CreateAt;
-    }
-
-    public void setCreateAt(Date createAt) {
-        CreateAt = createAt;
+    public Historia() {
     }
 
     public long getId() {
@@ -78,4 +46,38 @@ public class Cita {
     public void setId(long id) {
         this.id = id;
     }
+
+    public long getIdPaciente() {
+        return IdPaciente;
+    }
+
+    public void setIdPaciente(long IdPaciente) {
+        this.IdPaciente = IdPaciente;
+    }
+
+    public long getIdDoctor() {
+        return IdDoctor;
+    }
+
+    public void setIdDoctor(long IdDoctor) {
+        this.IdDoctor = IdDoctor;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+
+    public Date getCreateAt() {
+        return CreateAt;
+    }
+
+    public void setCreateAt(Date CreateAt) {
+        this.CreateAt = CreateAt;
+    }
+
+
 }

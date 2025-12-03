@@ -37,6 +37,9 @@ public class Doctor {
         this.nombre = nombre;
     }
 
+    public Doctor() {
+    }
+
     public String getNombre() {
         return nombre;
     }

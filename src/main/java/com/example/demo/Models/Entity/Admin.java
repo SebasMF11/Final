@@ -19,6 +19,10 @@ public class Admin {
         this.correo = correo;
     }
 
+    public Admin() {
+    }
+
+
     public long getId() {
         return id;
     }
