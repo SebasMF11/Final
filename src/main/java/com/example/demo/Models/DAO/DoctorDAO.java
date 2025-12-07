@@ -11,7 +11,7 @@ public interface DoctorDAO {
 
     List<Doctor> findAll();
 
-    void save(Doctor doctor);
+    Doctor save(Doctor doctor);
 
     void delete(long id);
 

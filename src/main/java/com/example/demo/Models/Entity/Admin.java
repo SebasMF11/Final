@@ -22,7 +22,6 @@ public class Admin {
     public Admin() {
     }
 
-
     public long getId() {
         return id;
     }

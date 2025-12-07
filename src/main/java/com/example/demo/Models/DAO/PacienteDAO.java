@@ -10,7 +10,7 @@ public interface PacienteDAO {
 
     List<Paciente> findAll();
 
-    void save(Paciente paciente);
+    Paciente save(Paciente paciente);
 
     void delete(long id);
 
