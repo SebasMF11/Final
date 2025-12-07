@@ -74,20 +74,41 @@ public ResponseEntity<?> crearPaciente(@RequestBody Paciente paciente) {
 }
 
     @PutMapping("/actualizar/{id}")
-    public Paciente actualizarPaciente(@PathVariable Long id, @RequestBody Paciente nuevo) {
-        Paciente existente = pacienteDAO.findById(id);
+public Paciente actualizarPaciente(@PathVariable Long id, @RequestBody Paciente nuevo) {
+    
+    Paciente existente = pacienteDAO.findById(id);
 
-        existente.setNombre(nuevo.getNombre());
-        existente.setApellido(nuevo.getApellido());
-        existente.setCorreo(nuevo.getCorreo());
-        existente.setContraseña(nuevo.getContraseña());
+    String correoAnterior = existente.getCorreo();
 
-        return pacienteDAO.save(existente);
+    existente.setNombre(nuevo.getNombre());
+    existente.setApellido(nuevo.getApellido());
+    existente.setCorreo(nuevo.getCorreo());
+    existente.setContraseña(nuevo.getContraseña());
+
+    Usuario usuario = usuarioDAO.findByCorreo(correoAnterior);
+
+    if (usuario != null) {
+        usuario.setCorreo(nuevo.getCorreo());
+        usuario.setContraseña(nuevo.getContraseña());
+        
+        usuarioDAO.save(usuario); 
     }
+
+    return pacienteDAO.save(existente);
+}
 
     @DeleteMapping("/eliminar/{id}")
     public String eliminarPaciente(@PathVariable Long id) {
-        pacienteDAO.delete(id);
+        Paciente paciente = pacienteDAO.findById(id);
+        if (paciente == null) {
+            return "Error: Paciente no encontrado con id " + id;
+        }
+        Usuario usuario = usuarioDAO.findByCorreo(paciente.getCorreo());
+        if (usuario != null) {
+            usuarioDAO.delete(usuario.getId());
+        }
+        pacienteDAO.delete(paciente.getId());
+
         return "Paciente eliminado correctamente";
     }
 }

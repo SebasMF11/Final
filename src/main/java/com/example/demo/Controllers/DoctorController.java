@@ -60,6 +60,13 @@ public class DoctorController {
         return ResponseEntity.ok(nuevo);
     }
 
+    //MOSTRAR DOCTORES POR ESPECIALIDAD
+    @GetMapping("/especialidad/{esp}")
+    public List<Doctor> obtenerPorEspecialidad(@PathVariable String esp) {
+        return doctorDAO.findByEspecialidad(esp);
+    }
+
+
     @PutMapping("/actualizar/{id}")
     public Doctor actualizarDoctor(@PathVariable Long id, @RequestBody Doctor nuevo) {
         Doctor existente = doctorDAO.findById(id);

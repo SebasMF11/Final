@@ -1,17 +1,15 @@
 package com.example.demo.Models.Entity;
 
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
-import org.hibernate.annotations.CreationTimestamp;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
 
 @Entity
 @Table (name = "Citas")
@@ -20,31 +18,23 @@ public class Cita {
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private long id;
-    private String estado;
     private long IdPaciente;
     private long IdDoctor;
 
-    @CreationTimestamp
-    @Column(name = "creation_date", nullable = false, updatable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date CreateAt;
+    @JsonFormat(pattern = "dd-MM-yyyy")
+    private LocalDate fecha;
 
-    public Cita(long IdPaciente, long IdDoctor, String estado, Date CreateAt) {
-        this.CreateAt = CreateAt;
-        this.IdDoctor = IdDoctor;
-        this.IdPaciente = IdPaciente;
-        this.estado = estado;
-    }
+    @JsonFormat(pattern = "HH:mm")
+    private LocalTime hora;
 
     public Cita() {
     }
 
-    public String getEstado() {
-        return estado;
-    }
-
-    public void setEstado(String estado) {
-        this.estado = estado;
+    public Cita(long IdDoctor, long IdPaciente, LocalDate fecha, LocalTime hora) {
+        this.IdDoctor = IdDoctor;
+        this.IdPaciente = IdPaciente;
+        this.fecha = fecha;
+        this.hora = hora;
     }
 
     public long getIdPaciente() {
@@ -63,13 +53,6 @@ public class Cita {
         IdDoctor = idDoctor;
     }
 
-    public Date getCreateAt() {
-        return CreateAt;
-    }
-
-    public void setCreateAt(Date createAt) {
-        CreateAt = createAt;
-    }
 
     public long getId() {
         return id;
@@ -77,5 +60,21 @@ public class Cita {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public LocalDate getFecha() {
+        return fecha;
+    }
+
+    public void setFecha(LocalDate fecha) {
+        this.fecha = fecha;
+    }
+
+    public LocalTime getHora() {
+        return hora;
+    }
+
+    public void setHora(LocalTime hora) {
+        this.hora = hora;
     }
 }

@@ -20,8 +20,7 @@ public class Historia {
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private long id;
 
-    private long IdPaciente;
-    private long IdDoctor;
+    private long IdCita;
     private String descripcion;
 
     @CreationTimestamp
@@ -29,10 +28,9 @@ public class Historia {
     @Temporal(TemporalType.TIMESTAMP)
     private Date CreateAt;
 
-    public Historia(long IdPaciente, long IdDoctor, Date CreateAt, String descripcion) {
+    public Historia(long IdPaciente, long IdCita, Date CreateAt, String descripcion) {
         this.CreateAt = CreateAt;
-        this.IdDoctor = IdDoctor;
-        this.IdPaciente = IdPaciente;
+        this.IdCita = IdCita;
         this.descripcion = descripcion;
     }
 
@@ -47,20 +45,12 @@ public class Historia {
         this.id = id;
     }
 
-    public long getIdPaciente() {
-        return IdPaciente;
+    public long getIdCita() {
+        return IdCita;
     }
 
-    public void setIdPaciente(long IdPaciente) {
-        this.IdPaciente = IdPaciente;
-    }
-
-    public long getIdDoctor() {
-        return IdDoctor;
-    }
-
-    public void setIdDoctor(long IdDoctor) {
-        this.IdDoctor = IdDoctor;
+    public void setIdPaciente(long IdCita) {
+        this.IdCita = IdCita;
     }
 
     public String getDescripcion() {

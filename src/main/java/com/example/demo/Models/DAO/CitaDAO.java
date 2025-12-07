@@ -10,7 +10,7 @@ public interface CitaDAO {
 
     List<Cita> findAll();
 
-    void save(Cita cita);
+    Cita save(Cita cita);
 
     void delete(long id);
 

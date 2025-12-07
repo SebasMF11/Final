@@ -28,13 +28,15 @@ public class CitaDAOImpl implements CitaDAO {
     }
 
     @Override
-    public void save(Cita cita) {
-        if (cita.getId() == 0) {
-            em.persist(cita);
-        } else {
-            em.merge(cita);
-        }
+public Cita save(Cita cita) {
+    if (cita.getId() == 0) {
+        em.persist(cita);
+        return cita; 
+    } else {
+        return em.merge(cita); 
     }
+}
+
 
     @Override
     public void delete(long id) {

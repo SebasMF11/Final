@@ -33,8 +33,6 @@ public class Doctor {
     @JsonProperty("horaFin")
     private LocalTime horaFin;
 
-    private String estado;
-
     public Doctor() {
     }
 
@@ -44,7 +42,6 @@ public class Doctor {
         this.apellido = apellido;
         this.correo = correo;
         this.contraseña = contraseña;
-        this.estado = estado;
         this.horaFin = horaFin;
         this.horaInicio = horaInicio;
         this.especialidad = especialidad;
@@ -106,10 +103,4 @@ public class Doctor {
         this.horaFin = horaFin;
     }
 
-    public String getEstado() {
-        return estado;
-    }
-    public void setEstado(String estado) {
-        this.estado = estado;
-    }
 }

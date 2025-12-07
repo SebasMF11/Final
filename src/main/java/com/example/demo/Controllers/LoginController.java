@@ -1,5 +1,8 @@
 package com.example.demo.Controllers;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,24 +22,32 @@ public class LoginController {
     private UsuarioDAO usuarioDAO;
 
     @PostMapping
-    public Object login(@RequestBody Usuario credenciales) {
+public Object login(@RequestBody Usuario credenciales) {
 
-        Usuario usuario = usuarioDAO.findByCorreo(credenciales.getCorreo());
+    Usuario usuario = usuarioDAO.findByCorreo(credenciales.getCorreo());
 
-        if (usuario == null) {
-            return "Usuario no encontrado";
-        }
-
-        if (!usuario.getContraseña().equals(credenciales.getContraseña())) {
-            return "Contraseña incorrecta";
-        }
-
-        if ("ADMIN".equals(usuario.getRol())) {
-            return "Inicio de sesión exitoso. Rol: ADMIN";
-        } else if ("DOCTOR".equals(usuario.getRol())) {
-            return "Inicio de sesión exitoso. Rol: DOCTOR";
-        } else {
-            return "Inicio de sesión exitoso. Rol: PACIENTE";
-        }
+    if (usuario == null) {
+        return "Usuario no encontrado";
     }
+
+    if (!usuario.getContraseña().equals(credenciales.getContraseña())) {
+        return "Contraseña incorrecta";
+    }
+
+    Map<String, Object> response = new HashMap<>();
+    response.put("id", usuario.getId());
+    response.put("rol", usuario.getRol());
+    response.put("correo", usuario.getCorreo());
+
+    if ("ADMIN".equals(usuario.getRol())) {
+        response.put("mensaje", "Inicio de sesión exitoso. Rol: ADMIN");
+    } else if ("DOCTOR".equals(usuario.getRol())) {
+        response.put("mensaje", "Inicio de sesión exitoso. Rol: DOCTOR");
+    } else {
+        response.put("mensaje", "Inicio de sesión exitoso. Rol: PACIENTE");
+    }
+
+    return response;
+}
+
 }
