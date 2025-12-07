@@ -42,6 +42,15 @@ public class CitasController {
         return citaDAO.findAll();
     }
 
+    //MOSTRAR TODAS LAS CITAS DE X PACIENTE
+    @GetMapping("/paciente/{idPaciente}")
+    public ResponseEntity<?> obtenerCitasPorPaciente(@PathVariable Long idPaciente) {
+
+    List<Cita> citas = citaDAO.findByIdPaciente(idPaciente);
+
+    return ResponseEntity.ok(citas);
+}
+
     //MOSTRAR TODAS LAS CITAS DE X DOCTOR
     @GetMapping("/doctor/{idDoctor}")
     public ResponseEntity<?> obtenerCitasPorDoctor(@PathVariable Long idDoctor) {
