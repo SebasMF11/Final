@@ -30,9 +30,9 @@ public class PacienteController {
     @Autowired
     private UsuarioDAO usuarioDAO;
 
-  //  public PacienteController(PacienteDAO pacienteDAO) {
-  //      this.pacienteDAO = pacienteDAO;
-  //  }
+    /*   public PacienteController(PacienteDAO pacienteDAO) {
+        this.pacienteDAO = pacienteDAO;
+    }*/
 
     @GetMapping("/mostrar")
     public List<Paciente> listaPacientes() {
@@ -44,8 +44,15 @@ public class PacienteController {
         return pacienteDAO.findById(id);
     }
 
+    //CREAR PACIENTE NUEVO
     @PostMapping("/crear")
-public ResponseEntity<?> crearPaciente(@RequestBody Paciente paciente) {
+    public ResponseEntity<?> crearPaciente(@RequestBody Paciente paciente) {
+
+    if (!correoValido(paciente.getCorreo())) {
+        return ResponseEntity
+                .badRequest()
+                .body("Error: El correo ingresado no es válido.");
+    }
 
     Paciente existente = pacienteDAO.findByCorreo(paciente.getCorreo());
     if (existente != null) {
@@ -71,12 +78,46 @@ public ResponseEntity<?> crearPaciente(@RequestBody Paciente paciente) {
     usuarioDAO.save(usuario);
 
     return ResponseEntity.ok(nuevo);
+    }
+
+
+    private boolean correoValido(String correo) {
+    String regex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
+    return correo != null && correo.matches(regex);
 }
 
+
+    //ACTUALIZAR PACIENTE, Y A LA VEZ SU USUARIO
     @PutMapping("/actualizar/{id}")
-public Paciente actualizarPaciente(@PathVariable Long id, @RequestBody Paciente nuevo) {
-    
+public ResponseEntity<?> actualizarPaciente(@PathVariable Long id, @RequestBody Paciente nuevo) {
+
     Paciente existente = pacienteDAO.findById(id);
+    if (existente == null) {
+        return ResponseEntity.status(404).body("Error: Paciente no encontrado.");
+    }
+
+    String regex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
+    if (!nuevo.getCorreo().matches(regex)) {
+        return ResponseEntity
+            .status(400)
+            .body("Error: El correo ingresado no es válido.");
+    }
+
+    Paciente pacienteConMismoCorreo = pacienteDAO.findByCorreo(nuevo.getCorreo());
+
+    if (pacienteConMismoCorreo != null && pacienteConMismoCorreo.getId() != id) {
+        return ResponseEntity
+            .status(400)
+            .body("Error: Ya existe otro paciente registrado con ese correo.");
+    }
+
+    Usuario usuarioConMismoCorreo = usuarioDAO.findByCorreo(nuevo.getCorreo());
+
+    if (usuarioConMismoCorreo != null && !usuarioConMismoCorreo.getCorreo().equals(existente.getCorreo())) {
+        return ResponseEntity
+            .status(400)
+            .body("Error: Ya existe un usuario registrado con ese correo.");
+    }
 
     String correoAnterior = existente.getCorreo();
 
@@ -85,18 +126,21 @@ public Paciente actualizarPaciente(@PathVariable Long id, @RequestBody Paciente 
     existente.setCorreo(nuevo.getCorreo());
     existente.setContraseña(nuevo.getContraseña());
 
+    pacienteDAO.save(existente);
+
     Usuario usuario = usuarioDAO.findByCorreo(correoAnterior);
 
     if (usuario != null) {
         usuario.setCorreo(nuevo.getCorreo());
         usuario.setContraseña(nuevo.getContraseña());
-        
-        usuarioDAO.save(usuario); 
+        usuarioDAO.save(usuario);
     }
 
-    return pacienteDAO.save(existente);
+    return ResponseEntity.ok(existente);
 }
 
+
+    //ELIMINAR PACIENTE Y SU USUARIO ASOCIADO
     @DeleteMapping("/eliminar/{id}")
     public String eliminarPaciente(@PathVariable Long id) {
         Paciente paciente = pacienteDAO.findById(id);

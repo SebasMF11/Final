@@ -10,13 +10,15 @@ public interface HistoriaDAO {
 
     List<Historia> findAll();
 
-    void save(Historia historia);
+    Historia save(Historia historia);
 
     void delete(long id);
+
+    List<Historia> findByIdCitaL(List<Long> idsCitas);
 
     List<Historia> findByIdPaciente(long idPaciente);
 
     List<Historia> findByIdDoctor(long idDoctor);
 
-    List<Historia> searchByDescripcion(String texto);
+    List<Historia> findByIdCita(Long idCita);
 }

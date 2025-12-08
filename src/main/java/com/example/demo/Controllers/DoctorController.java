@@ -45,7 +45,7 @@ public class DoctorController {
 
         Usuario existe = usuarioDAO.findByCorreo(doctor.getCorreo());
         if (existe != null) {
-            return ResponseEntity.badRequest().body("Ya existe un usuario con ese correo");
+            return ResponseEntity.badRequest().body("Ya existe un Doctor con ese correo");
         }
 
         Doctor nuevo = doctorDAO.save(doctor);

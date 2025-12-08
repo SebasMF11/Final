@@ -10,7 +10,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.Models.DAO.DoctorDAO;
+import com.example.demo.Models.DAO.PacienteDAO;
 import com.example.demo.Models.DAO.UsuarioDAO;
+import com.example.demo.Models.Entity.Doctor;
+import com.example.demo.Models.Entity.Paciente;
 import com.example.demo.Models.Entity.Usuario;
 
 @RestController
@@ -21,8 +25,14 @@ public class LoginController {
     @Autowired
     private UsuarioDAO usuarioDAO;
 
+    @Autowired
+    private DoctorDAO doctorDAO;
+
+    @Autowired
+    private PacienteDAO pacienteDAO;
+
     @PostMapping
-public Object login(@RequestBody Usuario credenciales) {
+    public Object login(@RequestBody Usuario credenciales) {
 
     Usuario usuario = usuarioDAO.findByCorreo(credenciales.getCorreo());
 
@@ -35,19 +45,32 @@ public Object login(@RequestBody Usuario credenciales) {
     }
 
     Map<String, Object> response = new HashMap<>();
-    response.put("id", usuario.getId());
     response.put("rol", usuario.getRol());
     response.put("correo", usuario.getCorreo());
 
     if ("ADMIN".equals(usuario.getRol())) {
-        response.put("mensaje", "Inicio de sesión exitoso. Rol: ADMIN");
+
+    response.put("mensaje", "Inicio de sesión exitoso. Rol: ADMIN");
+
     } else if ("DOCTOR".equals(usuario.getRol())) {
-        response.put("mensaje", "Inicio de sesión exitoso. Rol: DOCTOR");
-    } else {
-        response.put("mensaje", "Inicio de sesión exitoso. Rol: PACIENTE");
+
+    Doctor doctor = doctorDAO.findByCorreo(usuario.getCorreo());
+    if (doctor != null) {
+        response.put("id", doctor.getId());
+    }
+    response.put("mensaje", "Inicio de sesión exitoso. Rol: DOCTOR");
+
+    } else if ("PACIENTE".equals(usuario.getRol())) {
+
+    Paciente paciente = pacienteDAO.findByCorreo(usuario.getCorreo());
+    if (paciente != null) {
+        response.put("id", paciente.getId());
+    }
+    response.put("mensaje", "Inicio de sesión exitoso. Rol: PACIENTE");
     }
 
-    return response;
+return response;
+
 }
 
 }

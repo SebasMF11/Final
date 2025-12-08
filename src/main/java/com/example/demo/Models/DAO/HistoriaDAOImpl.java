@@ -28,18 +28,31 @@ public class HistoriaDAOImpl implements HistoriaDAO {
     }
 
     @Override
-    public void save(Historia historia) {
+    public Historia save(Historia historia) {
         if (historia.getId() == 0) {
             em.persist(historia);
+            return historia;
         } else {
-            em.merge(historia);
+            return em.merge(historia);
         }
     }
+
 
     @Override
     public void delete(long id) {
         Historia h = findById(id);
         if (h != null) em.remove(h);
+    }
+
+
+        @Override
+    public List<Historia> findByIdCitaL(List<Long> idsCitas) {
+        return em.createQuery(
+                "SELECT h FROM Historia h WHERE h.idCita IN :ids",
+                Historia.class
+        )
+        .setParameter("ids", idsCitas)
+        .getResultList();
     }
 
     @Override
@@ -59,10 +72,11 @@ public class HistoriaDAOImpl implements HistoriaDAO {
     }
 
     @Override
-    public List<Historia> searchByDescripcion(String texto) {
-        return em.createQuery(
-                "FROM Historia h WHERE h.descripcion LIKE :texto", Historia.class)
-                .setParameter("texto", "%" + texto + "%")
-                .getResultList();
+    public List<Historia> findByIdCita(Long idCita) {
+        String jpql = "SELECT h FROM Historia h WHERE h.IdCita = :idCita";
+        return em.createQuery(jpql, Historia.class)
+             .setParameter("idCita", idCita)
+             .getResultList();
     }
+
 }

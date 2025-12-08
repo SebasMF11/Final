@@ -23,5 +23,11 @@ VALUES
 INSERT INTO citas (fecha, hora, id_doctor, id_paciente)
 VALUES
 ('2026-02-11', '09:00', 1, 1),
-('2026-02-11', '11:30', 2, 2);
+('2026-02-11', '11:30', 2, 2),
+('2026-02-11', '12:00', 2, 2);
+
+INSERT INTO historias (id_doctor, id_cita, descripcion, creation_date)
+VALUES
+(1, 1, 'Paciente presenta irritación leve en la piel. Se recomienda hidratación y evitar exposición prolongada al sol.', NOW()),
+(2, 2, 'Paciente con síntomas de resfriado común. Se prescribe reposo, buena hidratación y control en 3 días.', NOW());
 
