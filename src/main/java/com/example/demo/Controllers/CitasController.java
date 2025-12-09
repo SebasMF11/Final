@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -73,34 +72,27 @@ public class CitasController {
 
 
 
-
-
-    //CREAR UNA CITA A X PACIENTE
+    //CREAR UNA CITA A X PACIENTE CON 55 VALIDACIONES
     @PostMapping("/crear/{idPaciente}")
     public ResponseEntity<?> crearCita(@RequestBody Cita cita, @PathVariable Long idPaciente) {
 
-    // Asociar la cita al paciente
     cita.setIdPaciente(idPaciente);
 
-    // Validar doctor
     Doctor doctor = doctorDAO.findById(cita.getIdDoctor());
     if (doctor == null) {
         return ResponseEntity.badRequest().body("Error: El doctor no existe");
     }
 
-    // Validar paciente
     Paciente paciente = pacienteDAO.findById(idPaciente);
     if (paciente == null) {
         return ResponseEntity.badRequest().body("Error: El paciente no existe");
     }
 
-    // Validar fecha no anterior a hoy
     LocalDate fechaNueva = cita.getFecha();
     if (fechaNueva.isBefore(LocalDate.now())) {
         return ResponseEntity.badRequest().body("La fecha no puede ser anterior a hoy.");
     }
 
-    // Validar horarios del doctor
     LocalTime horaNueva = cita.getHora();
     LocalTime horaInicio = doctor.getHoraInicio();
     LocalTime horaFin = doctor.getHoraFin();
@@ -113,23 +105,18 @@ public class CitasController {
         );
     }
 
-    // Obtener citas del doctor
     List<Cita> citasDelDoctor = citaDAO.findByIdDoctor(cita.getIdDoctor());
 
-    // Validaciones por conflicto de horario
     for (Cita c : citasDelDoctor) {
 
-        // Solo comparar si es el mismo día
         if (c.getFecha().equals(fechaNueva)) {
 
-            // 1. Conflict exacto: misma hora exacta
             if (c.getHora().equals(horaNueva)) {
                 return ResponseEntity.badRequest().body(
                     "El doctor ya tiene una cita exactamente en esa hora."
                 );
             }
 
-            // 2. Debe haber al menos 30 minutos entre citas
             long diferenciaMinutos = Math.abs(
                     ChronoUnit.MINUTES.between(c.getHora(), horaNueva)
             );
@@ -143,33 +130,12 @@ public class CitasController {
         }
     }
 
-    // Si pasa todas las validaciones → crear cita
     Cita nueva = citaDAO.save(cita);
     return ResponseEntity.ok(nueva);
 }
 
 
-
-
-
-
-
-
-
-    @PutMapping("/actualizar/{id}")
-    public Cita actualizarCita(@PathVariable Long id, @RequestBody Cita nuevaCita) {
-        Cita existente = citaDAO.findById(id);
-        existente.setIdPaciente(nuevaCita.getIdPaciente());
-        existente.setIdDoctor(nuevaCita.getIdDoctor());
-        existente.setFecha(nuevaCita.getFecha());
-        existente.setHora(nuevaCita.getHora());
-
-
-        return citaDAO.save(existente);
-    }
-
-
-    //COMPROBAR QUE EL PACIENTE SI ES EL DUEÑO DE LA CITA
+    //PACIENTE ELIMINA CITA, COMPROBAR QUE EL PACIENTE SI ES EL DUEÑO DE LA CITA
     @DeleteMapping("/eliminar1/{idCita}/{idPaciente}")
     public String eliminarCita(@PathVariable Long idCita, @PathVariable Long idPaciente) {
 
@@ -187,7 +153,7 @@ public class CitasController {
     return "Cita eliminada correctamente";
     }
 
-    //COMPROBAR QUE EL DOCTOR SI ES EL DUEÑO DE LA CITA
+    //DOCTOR ELIMINA CITA, COMPROBAR QUE EL DOCTOR SI ES EL DUEÑO DE LA CITA
     @DeleteMapping("/eliminar2/{idCita}/{idDoctor}")
     public String eliminarCita2(@PathVariable Long idCita, @PathVariable Long idDoctor) {
 

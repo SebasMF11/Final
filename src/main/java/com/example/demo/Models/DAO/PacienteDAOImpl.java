@@ -30,11 +30,9 @@ public class PacienteDAOImpl implements PacienteDAO {
     @Override
     public Paciente save(Paciente paciente) {
         if (paciente.getId() == 0) {  
-            // Nuevo → persist
             em.persist(paciente);
-            return paciente; // IMPORTANTE: retornar la entidad persistida
+            return paciente; 
         } else {            
-            // Ya existe → merge (merge retorna la nueva instancia administrada)
             return em.merge(paciente);
         }
     }

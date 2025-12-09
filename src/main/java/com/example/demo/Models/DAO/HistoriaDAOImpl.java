@@ -73,7 +73,7 @@ public class HistoriaDAOImpl implements HistoriaDAO {
 
     @Override
     public List<Historia> findByIdCita(Long idCita) {
-        String jpql = "SELECT h FROM Historia h WHERE h.IdCita = :idCita";
+        String jpql = "SELECT h FROM Historia h WHERE h.idCita = :idCita";
         return em.createQuery(jpql, Historia.class)
              .setParameter("idCita", idCita)
              .getResultList();

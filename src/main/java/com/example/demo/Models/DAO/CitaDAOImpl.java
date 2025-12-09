@@ -37,7 +37,6 @@ public Cita save(Cita cita) {
     }
 }
 
-
     @Override
     public void delete(long id) {
         Cita c = findById(id);

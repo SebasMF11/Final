@@ -80,7 +80,7 @@ public class PacienteController {
     return ResponseEntity.ok(nuevo);
     }
 
-
+    //VALIDAR FORMATO DE CORREO
     private boolean correoValido(String correo) {
     String regex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
     return correo != null && correo.matches(regex);

@@ -1,7 +1,7 @@
 INSERT INTO doctores (nombre, apellido, contraseña, correo, especialidad, hora_inicio, hora_fin)
 VALUES 
-('Carlos', 'Torres', '12345', 'doc1@salud.com', 'Dermatología', '08:00', '16:00'),
-('Laura', 'Méndez', '12345', 'doc2@salud.com', 'Pediatría', '10:00', '18:00');
+('Carlos', 'Torres', '12345', 'doc1@salud.com', 'Dermatologia', '08:00', '16:00'),
+('Laura', 'Méndez', '12345', 'doc2@salud.com', 'Pediatria', '10:00', '18:00');
 
 INSERT INTO pacientes (nombre, apellido, contraseña, correo)
 VALUES
@@ -26,8 +26,8 @@ VALUES
 ('2026-02-11', '11:30', 2, 2),
 ('2026-02-11', '12:00', 2, 2);
 
-INSERT INTO historias (id_doctor, id_cita, descripcion, creation_date)
+INSERT INTO historias (id_cita, descripcion, creation_date)
 VALUES
-(1, 1, 'Paciente presenta irritación leve en la piel. Se recomienda hidratación y evitar exposición prolongada al sol.', NOW()),
-(2, 2, 'Paciente con síntomas de resfriado común. Se prescribe reposo, buena hidratación y control en 3 días.', NOW());
+(1, 'Paciente presenta irritación leve en la piel. Se recomienda hidratación y evitar exposición prolongada al sol.', NOW()),
+(2, 'Paciente con síntomas de resfriado común. Se prescribe reposo, buena hidratación y control en 3 días.', NOW());
 

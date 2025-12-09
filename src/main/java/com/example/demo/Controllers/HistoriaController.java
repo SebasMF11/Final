@@ -3,6 +3,7 @@ package com.example.demo.Controllers;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -30,22 +31,43 @@ public class HistoriaController {
     private CitaDAO citaDAO;
 
     //CREAR HISTORIA, SE VERIFICA QUE SI SEA EL DOCTOR DE LA CITA SELECCIONADA
-    @PostMapping("/crear")
-    public ResponseEntity<?> crearHistoria(@RequestBody Historia historia) {
+    @PostMapping("/crear/{idDoctor}")
+    public ResponseEntity<?> crearHistoria(
+        @PathVariable Long idDoctor,
+        @RequestBody Historia historiaRequest) {
 
-    // 1. Validar que la cita no tenga ya una historia clínica
-        List<Historia> historiasExistentes = historiaDAO.findByIdCita(historia.getIdCita());
+        Long idCita = historiaRequest.getIdCita();
 
-        if (!historiasExistentes.isEmpty()) {
-            return ResponseEntity.badRequest().body(
-                "Error: Esta cita ya tiene una historia clínica registrada."
-            );
-        }
-
-        Historia nueva = historiaDAO.save(historia);
-        return ResponseEntity.ok(nueva);
+        Cita cita = citaDAO.findById(idCita);
+    if (cita == null) {
+        return ResponseEntity.badRequest().body("Error: La cita no existe.");
     }
 
+    if (cita.getIdDoctor() != idDoctor) {
+        return ResponseEntity
+                .badRequest()
+                .body("Error: El doctor enviado no coincide con el asignado a esta cita.");
+    }
+
+    List<Historia> historiasExistentes = historiaDAO.findByIdCita(idCita);
+    if (!historiasExistentes.isEmpty()) {
+        return ResponseEntity.badRequest().body(
+                "Error: Esta cita ya tiene una historia clínica registrada."
+        );
+    }
+
+    Historia nueva = new Historia();
+    nueva.setIdCita(idCita);
+    nueva.setDescripcion(historiaRequest.getDescripcion());
+
+    Historia guardada = historiaDAO.save(nueva);
+
+    return ResponseEntity.ok(guardada);
+    }
+
+
+
+    
     //MOSTRAR TODAS LAS HISTORIAS DE X DOCTOR
     @GetMapping("/doctor/{idDoctor}")
     public ResponseEntity<?> obtenerHistoriasPorDoctor(@PathVariable Long idDoctor) {
@@ -86,19 +108,16 @@ public class HistoriaController {
     }
 
 
-    // ➤ 2. Obtener todas las historias
     @GetMapping("/mostrar")
     public List<Historia> listarHistorias() {
         return historiaDAO.findAll();
     }
 
-    // ➤ 3. Obtener historias por id de cita
     @GetMapping("/cita/{idCita}")
     public List<Historia> obtenerPorIdCita(@PathVariable Long idCita) {
         return historiaDAO.findByIdCita(idCita);
     }
 
-    // ➤ 4. Obtener historia por id
     @GetMapping("/{id}")
     public ResponseEntity<?> obtenerHistoria(@PathVariable Long id) {
         Historia historia = historiaDAO.findById(id);
@@ -109,16 +128,36 @@ public class HistoriaController {
     }
 
    
-    // ➤ 6. Eliminar historia
-    @DeleteMapping("/eliminar/{id}")
-    public ResponseEntity<?> eliminarHistoria(@PathVariable Long id) {
+    //ELIMINAR HISTORIA Y COMPROBAR QUE SI SEA EL DOCTOR DUEÑO DE LA HISTORIA
+   @DeleteMapping("/eliminar/{idHistoria}/{idDoctor}")
+public ResponseEntity<?> eliminarHistoria(
+        @PathVariable Long idHistoria,
+        @PathVariable Long idDoctor) {
 
-        Historia historia = historiaDAO.findById(id);
-        if (historia == null) {
-            return ResponseEntity.badRequest().body("No existe la historia con id " + id);
-        }
-
-        historiaDAO.delete(historia.getId());
-        return ResponseEntity.ok("Historia eliminada correctamente.");
+    Historia historia = historiaDAO.findById(idHistoria);
+    if (historia == null) {
+        return ResponseEntity
+                .badRequest()
+                .body("No existe la historia con id " + idHistoria);
     }
+
+    Cita cita = citaDAO.findById(historia.getIdCita());
+    if (cita == null) {
+        return ResponseEntity
+                .badRequest()
+                .body("La historia existe, pero su cita asociada no.");
+    }
+
+    if (cita.getIdDoctor() != idDoctor) {
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body("No tienes permiso para eliminar esta historia. "
+                        + "Solo el doctor que atendió la cita puede hacerlo.");
+    }
+
+    historiaDAO.delete(idHistoria);
+
+    return ResponseEntity.ok("Historia eliminada correctamente.");
+}
+
 }
